@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notenrechner – Klausurnoten &amp; Gesamtnoten</title>
+  <meta name="description" content="Interaktiver Notenrechner für deutsche Schulen. Berechne Klausurnoten aus Punkten und Gesamtnoten aus gewichteten Teilnoten – MSS-Punkte und klassisches Notensystem.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Ambient background glows -->
+  <div class="ambient" aria-hidden="true">
+    <div class="glow glow-a"></div>
+    <div class="glow glow-b"></div>
+    <div class="glow glow-c"></div>
+  </div>
+
+  <div class="app">
+
+    <!-- Header -->
+    <header class="app-header">
+      <div class="hdr-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 11l3 3L22 4"/>
+          <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+        </svg>
+      </div>
+      <div class="hdr-text">
+        <h1 class="hdr-title">Notenrechner</h1>
+        <p class="hdr-sub">Klausurnoten &amp; Gesamtnoten &middot; MSS &amp; klassisches Notensystem</p>
+      </div>
+    </header>
+
+    <!-- Tab Navigation -->
+    <nav class="tabs" role="tablist" aria-label="Berechnungsmodus auswählen">
+      <button class="tab active" id="tab-btn-1" role="tab"
+              aria-selected="true" aria-controls="tab-panel-1" data-tab="1">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="16" rx="2"/>
+          <line x1="8" y1="9" x2="16" y2="9"/>
+          <line x1="8" y1="13" x2="14" y2="13"/>
+          <line x1="8" y1="17" x2="12" y2="17"/>
+        </svg>
+        <span>Klausurnote aus Punkten</span>
+      </button>
+      <button class="tab" id="tab-btn-2" role="tab"
+              aria-selected="false" aria-controls="tab-panel-2" data-tab="2">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+        </svg>
+        <span>Gesamtnote aus Teilnoten</span>
+      </button>
+    </nav>
+
+    <!-- TAB 1 -->
+    <section id="tab-panel-1" class="tab-panel active" role="tabpanel" aria-labelledby="tab-btn-1">
+      <div class="panel-grid">
+
+        <div class="card" id="t1-input-card">
+          <div class="card-hdr">
+            <h2 class="card-title">Punkte eingeben</h2>
+            <p class="card-sub">Die Note wird live berechnet – kein Klick nötig.</p>
+          </div>
+          <div class="card-body">
+            <div class="field-group">
+              <label class="field-label" for="t1-max-points">Maximale Punktzahl</label>
+              <div class="inp-wrap">
+                <input type="number" id="t1-max-points" class="inp"
+                  placeholder="z. B. 100" min="0.5" step="0.5" autocomplete="off">
+                <span class="inp-unit">Pkt.</span>
+              </div>
+              <span class="field-err hidden" id="t1-err-max" role="alert"></span>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="t1-achieved-points">Erreichte Punkte</label>
+              <div class="inp-wrap">
+                <input type="number" id="t1-achieved-points" class="inp"
+                  placeholder="z. B. 73" min="0" step="0.5" autocomplete="off">
+                <span class="inp-unit">Pkt.</span>
+              </div>
+              <span class="field-err hidden" id="t1-err-achieved" role="alert"></span>
+            </div>
+            <div class="pct-bar-box">
+              <div class="pct-bar-hdr">
+                <span class="pct-bar-label">Prozentualer Anteil</span>
+                <span class="pct-bar-val" id="t1-pct-display">&ndash;</span>
+              </div>
+              <div class="pct-bar-track">
+                <div class="pct-bar-fill" id="t1-pct-bar" style="width:0%"></div>
+                <div class="pct-bar-mark" style="left:50%" title="50 % – typische Bestehensschwelle"></div>
+                <div class="pct-bar-mark pct-bar-mark-dim" style="left:40%" title="40 % – Mindestbestehen Gymnasiale Oberstufe"></div>
+              </div>
+              <div class="pct-bar-foot">
+                <span>0 %</span>
+                <span>50 %</span>
+                <span>100 %</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="t1-result-card">
+          <div class="card-hdr">
+            <h2 class="card-title">Ergebnis</h2>
+            <p class="card-sub">Berechnet nach deutschem Schulnotensystem.</p>
+          </div>
+          <div class="card-body" id="t1-results">
+            <div class="result-empty">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M9 11l3 3L22 4"/>
+                <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+              </svg>
+              <p>Gib Punkte ein, um die Note zu berechnen.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card card-full" id="t1-table-card">
+          <div class="card-hdr collapsible-hdr" id="t1-table-toggle"
+               role="button" tabindex="0" aria-expanded="false" aria-controls="t1-table-body">
+            <div>
+              <h2 class="card-title">Notentabelle</h2>
+              <p class="card-sub">Referenz: Prozent &rarr; MSS-Punkte &rarr; Note &nbsp;(klicken zum Öffnen)</p>
+            </div>
+            <span class="collapse-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </span>
+          </div>
+          <div class="collapsible-body collapsed" id="t1-table-body">
+            <div class="table-scroll">
+              <table class="ntable">
+                <thead>
+                  <tr>
+                    <th>MSS-Punkte</th>
+                    <th>von %</th>
+                    <th>bis %</th>
+                    <th>Note (Gymnasium)</th>
+                    <th>Note (Real./Haupts.)</th>
+                  </tr>
+                </thead>
+                <tbody id="t1-table-rows"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 2 -->
+    <section id="tab-panel-2" class="tab-panel" role="tabpanel" aria-labelledby="tab-btn-2">
+      <div class="panel-grid">
+
+        <div class="card card-full" id="t2-grades-card">
+          <div class="card-hdr">
+            <h2 class="card-title">Teilnoten &amp; Gewichtungen</h2>
+            <p class="card-sub">Füge Teilleistungen hinzu und vergib Gewichtungen. Die Summe sollte 100 % ergeben.</p>
+          </div>
+          <div class="card-body">
+            <div class="wt-progress">
+              <div class="wt-progress-hdr">
+                <span class="wt-progress-label">Gesamtgewichtung</span>
+                <span class="wt-progress-val" id="t2-weight-display">0 %</span>
+              </div>
+              <div class="wt-bar-track">
+                <div class="wt-bar-fill" id="t2-weight-bar" style="width:0%"></div>
+              </div>
+              <div class="wt-status status-warn" id="t2-weight-status">
+                <span class="wt-status-icon" aria-hidden="true">&#9888;&#65039;</span>
+                <span id="t2-weight-status-txt">Gewichtung noch nicht vollständig.</span>
+              </div>
+            </div>
+            <div class="gr-header" aria-hidden="true">
+              <span class="gr-hcol">Bezeichnung</span>
+              <span class="gr-hcol">Typ</span>
+              <span class="gr-hcol">Note / Punkte</span>
+              <span class="gr-hcol">Gewichtung</span>
+              <span class="gr-hcol"></span>
+            </div>
+            <div id="t2-rows" role="list" aria-label="Teilnoten-Liste"></div>
+            <button class="add-row-btn" id="t2-add-btn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="16"/>
+                <line x1="8" y1="12" x2="16" y2="12"/>
+              </svg>
+              Teilleistung hinzufügen
+            </button>
+          </div>
+        </div>
+
+        <div class="card" id="t2-result-card">
+          <div class="card-hdr">
+            <h2 class="card-title">Berechnete Gesamtnote</h2>
+            <p class="card-sub">Gewichteter Durchschnitt aller gültigen Teilnoten.</p>
+          </div>
+          <div class="card-body" id="t2-results">
+            <div class="result-empty">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M3 3h7v7H3z"/><path d="M14 3h7v7h-7z"/>
+                <path d="M14 14h7v7h-7z"/><path d="M3 14h7v7H3z"/>
+              </svg>
+              <p>Füge mindestens eine gültige Teilnote hinzu.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="t2-info-card">
+          <div class="card-hdr">
+            <h2 class="card-title">Hinweise</h2>
+          </div>
+          <div class="card-body">
+            <ul class="info-list">
+              <li class="info-item">
+                <span class="info-dot dot-emerald" aria-hidden="true"></span>
+                <span><strong>Note (1–6):</strong> Dezimalwerte wie 2,3 sind erlaubt.</span>
+              </li>
+              <li class="info-item">
+                <span class="info-dot dot-amber" aria-hidden="true"></span>
+                <span><strong>MSS (0–15):</strong> Ganze Punkte des Oberstufensystems.</span>
+              </li>
+              <li class="info-item">
+                <span class="info-dot" aria-hidden="true"></span>
+                <span>Gewichtungen müssen in Summe <strong>100 %</strong> ergeben.</span>
+              </li>
+              <li class="info-item">
+                <span class="info-dot" aria-hidden="true"></span>
+                <span>Leere Felder werden bei der Berechnung ignoriert.</span>
+              </li>
+              <li class="info-item">
+                <span class="info-dot" aria-hidden="true"></span>
+                <span>Bestehensgrenze Oberstufe: <strong>4– (MSS 4, ca. 40 %)</strong></span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <footer class="app-footer">
+      <p>Notenrechner &middot; Gymnasium, Realschule &amp; Hauptschule &middot; MSS &amp; klassisches Notensystem</p>
+    </footer>
+
+  </div>
+
+  <script src="js/gradeCalc.js"></script>
+  <script src="js/tab1.js"></script>
+  <script src="js/tab2.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
